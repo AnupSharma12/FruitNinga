@@ -64,6 +64,41 @@ function createSlashEffect(x, y, velocityX, velocityY) {
   setTimeout(() => slash.remove(), 600);
 }
 
+function sliceFruit(fruit) {
+  if (!fruit || fruit.classList.contains('sliced')) return;
+  fruit.classList.add('sliced');
+
+  const rect = fruit.getBoundingClientRect();
+  const width = rect.width;
+  const height = rect.height;
+
+  const leftHalf = document.createElement('img');
+  const rightHalf = document.createElement('img');
+  leftHalf.src = fruit.src;
+  rightHalf.src = fruit.src;
+  leftHalf.className = 'fruit-half fruit-half-left';
+  rightHalf.className = 'fruit-half fruit-half-right';
+
+  [leftHalf, rightHalf].forEach((half) => {
+    half.style.width = `${width}px`;
+    half.style.height = `${height}px`;
+    half.style.left = `${rect.left}px`;
+    half.style.top = `${rect.top}px`;
+  });
+
+  gameStage.appendChild(leftHalf);
+  gameStage.appendChild(rightHalf);
+  fruit.remove();
+
+  requestAnimationFrame(() => {
+    leftHalf.classList.add('fruit-half-slice-left');
+    rightHalf.classList.add('fruit-half-slice-right');
+  });
+
+  leftHalf.addEventListener('animationend', () => leftHalf.remove(), { once: true });
+  rightHalf.addEventListener('animationend', () => rightHalf.remove(), { once: true });
+}
+
 function checkFruitHit(bladeX, bladeY) {
   const fruits = gameStage.querySelectorAll('.throw-fruit:not(.sliced)');
   const bladeRadius = 30;
@@ -78,8 +113,7 @@ function checkFruitHit(bladeX, bladeY) {
     );
 
     if (distance < bladeRadius + rect.width / 2) {
-      fruit.classList.add('sliced');
-      setTimeout(() => fruit.remove(), 400);
+      sliceFruit(fruit);
     }
   });
 }
