@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fruit Ninja - Menu</title>
+  <style>
+    /* ── Reset & Base ── */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #1a0a00;
+    }
+
+    /* ── Background ── */
+    .menu-bg {
+      position: fixed;
+      inset: 0;
+      background: url('images/background.jpg') center/cover no-repeat;
+      filter: brightness(0.6) blur(2px);
+      z-index: 0;
+    }
+
+    /* ── Floating Fruits ── */
+    .floating-fruits {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .fruit {
+      position: absolute;
+      width: 60px;
+      opacity: 0.5;
+      animation: floatUp linear infinite;
+    }
+
+    .fruit:nth-child(1) { left: 5%;  animation-duration: 6s; animation-delay: 0s;   width: 55px; }
+    .fruit:nth-child(2) { left: 15%; animation-duration: 8s; animation-delay: 1s;   width: 70px; }
+    .fruit:nth-child(3) { left: 30%; animation-duration: 7s; animation-delay: 0.5s; width: 50px; }
+    .fruit:nth-child(4) { left: 45%; animation-duration: 9s; animation-delay: 2s;   width: 65px; }
+    .fruit:nth-child(5) { left: 55%; animation-duration: 6s; animation-delay: 0.8s; width: 60px; }
+    .fruit:nth-child(6) { left: 70%; animation-duration: 8s; animation-delay: 1.5s; width: 55px; }
+    .fruit:nth-child(7) { left: 85%; animation-duration: 7s; animation-delay: 0.3s; width: 70px; }
+    .fruit:nth-child(8) { left: 92%; animation-duration: 9s; animation-delay: 2.5s; width: 50px; }
+
+    @keyframes floatUp {
+      0%   { bottom: -80px; transform: rotate(0deg)   translateX(0);   opacity: 0.5; }
+      25%  { transform: rotate(90deg)  translateX(30px);  opacity: 0.6; }
+      50%  { transform: rotate(180deg) translateX(-20px); opacity: 0.5; }
+      75%  { transform: rotate(270deg) translateX(40px);  opacity: 0.4; }
+      100% { bottom: 110%;  transform: rotate(360deg) translateX(0);   opacity: 0;   }
+    }
+
+    /* ── Menu Card ── */
+    .menu-card {
+      position: relative;
+      z-index: 2;
+      background: rgba(10, 5, 0, 0.75);
+      backdrop-filter: blur(8px);
+      border: 2px solid rgba(255, 180, 50, 0.3);
+      border-radius: 32px;
+      padding: 50px 60px 45px;
+      text-align: center;
+      max-width: 480px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(255, 120, 0, 0.15);
+      transition: transform 0.3s ease;
+    }
+
+    .menu-card:hover {
+      transform: scale(1.01);
+    }
+
+    /* ── Logo ── */
+    .logo {
+      width: 280px;
+      max-width: 80%;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 8px 20px rgba(255, 100, 0, 0.4));
+    }
+
+    /* ── Tagline ── */
+    .tagline {
+      font-size: 16px;
+      color: #ffb850;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 35px;
+      font-weight: 300;
+      text-shadow: 0 0 10px rgba(255, 150, 0, 0.3);
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 16px 0;
+      border: none;
+      border-radius: 50px;
+      font-size: 22px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      margin-bottom: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .btn:hover::after {
+      opacity: 1;
+    }
+
+    .btn-play {
+      background: linear-gradient(135deg, #ff6a00, #ee2a00);
+      color: #fff;
+      box-shadow: 0 6px 25px rgba(255, 60, 0, 0.5);
+    }
+
+    .btn-play:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 35px rgba(255, 60, 0, 0.65);
+    }
+
+    .btn-play:active {
+      transform: translateY(0);
+    }
+
+    .btn-scores {
+      background: transparent;
+      color: #ffb850;
+      border: 2px solid rgba(255, 180, 50, 0.35);
+      font-size: 17px;
+      padding: 12px 0;
+    }
+
+    .btn-scores:hover {
+      background: rgba(255, 180, 50, 0.1);
+      border-color: #ffb850;
+    }
+
+    /* ── Fruit slices (decorative) ── */
+    .slice-deco {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .slice-deco img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+      opacity: 0.5;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .slice-deco img:nth-child(2) { animation-delay: 0.4s; }
+    .slice-deco img:nth-child(3) { animation-delay: 0.8s; }
+    .slice-deco img:nth-child(4) { animation-delay: 1.2s; }
+    .slice-deco img:nth-child(5) { animation-delay: 1.6s; }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1);   opacity: 0.4; }
+      50%      { transform: scale(1.15); opacity: 0.7; }
+    }
+
+    /* ── Blade cursor trail (fun gimmick) ── */
+    .blade-trail {
+      position: fixed;
+      pointer-events: none;
+      z-index: 999;
+      width: 40px;
+      height: 40px;
+      background: radial-gradient(circle, rgba(255,255,255,0.6) 0%, transparent 70%);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      mix-blend-mode: screen;
+      transition: opacity 0.1s;
+      opacity: 0;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 500px) {
+      .menu-card { padding: 30px 24px 28px; }
+      .btn       { font-size: 18px; padding: 14px 0; }
+      .btn-scores { font-size: 15px; }
+      .logo      { width: 200px; }
+      .tagline   { font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background -->
+  <div class="menu-bg"></div>
+
+  <!-- Floating Fruits -->
+  <div class="floating-fruits">
+    <img class="fruit" src="images/apple.png"/>
+    <img class="fruit" src="images/banana.png"/>
+    <img class="fruit" src="images/watermelon.png"/>
+    <img class="fruit" src="images/strawberry.png"/>
+    <img class="fruit" src="images/peach.png"/>
+    <img class="fruit" src="images/apple.png"/>
+    <img class="fruit" src="images/banana.png"/>
+    <img class="fruit" src="images/watermelon.png"/>
+  </div>
+
+  <!-- Main Menu Card -->
+  <div class="menu-card">
+
+    <!-- Logo -->
+    <img class="logo" src="images/logo.png" alt="Fruit Ninja" />
+
+    <!-- Tagline -->
+    <div class="tagline">⚔ Slice &amp; Dice ⚔</div>
+
+    <!-- Play Button -->
+    <button class="btn btn-play" id="playBtn">▶ &nbsp;Play</button>
+
+    <!-- High Scores Button -->
+    <button class="btn btn-scores" id="scoresBtn">🏆 High Scores</button>
+
+    <!-- Decorative fruit row -->
+    <div class="slice-deco">
+      <img src="images/apple.png"/>
+      <img src="images/strawberry.png"/>
+      <img src="images/watermelon.png"/>
+      <img src="images/banana.png"/>
+      <img src="images/peach.png"/>
+    </div>
+  </div>
+
+  <!-- Blade Trail (cursor effect) -->
+  <div class="blade-trail" id="bladeTrail"></div>
+</body>
+</html>
