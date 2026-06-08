@@ -16,16 +16,31 @@ let isGameActive = false;
 let lastX = 0;
 let lastY = 0;
 let isMouseDown = false;
+let spawnInterval = null;
+let nextFruitIndex = 0;
 
-function createThrownFruit(imageSrc, index) {
+function createThrownFruit(imageSrc) {
   const fruit = document.createElement('img');
   fruit.src = imageSrc;
   fruit.className = 'throw-fruit';
-  fruit.style.setProperty('--start-x', `${10 + index * 10}%`);
-  fruit.style.setProperty('--throw-offset', `${((index % 5) - 2) * 45}px`);
-  fruit.style.setProperty('--spin-start', `${index * 76}deg`);
-  fruit.style.setProperty('--spin-end', `${720 + index * 90}deg`);
-  fruit.style.setProperty('--delay', `${index * 140}ms`);
+
+  const offsetX = (Math.random() - 0.5) * 140;
+  const startX = 10 + Math.random() * 80;
+  const spinStart = Math.round(Math.random() * 360);
+  const spinEnd = 720 + Math.round(Math.random() * 360);
+  const peakHeight = 50 + Math.random() * 40;
+  const duration = 3.4 + Math.random() * 1.2;
+
+  fruit.style.setProperty('--start-x', `${startX}%`);
+  fruit.style.setProperty('--throw-offset', `${offsetX}px`);
+  fruit.style.setProperty('--spin-start', `${spinStart}deg`);
+  fruit.style.setProperty('--spin-end', `${spinEnd}deg`);
+  fruit.style.setProperty('--delay', `0ms`);
+  fruit.style.setProperty('--peak-height', `${peakHeight}vh`);
+  fruit.style.setProperty('--duration', `${duration}s`);
+  fruit.style.width = `${50 + Math.round(Math.random() * 30)}px`;
+
+  nextFruitIndex += 1;
   return fruit;
 }
 
@@ -108,49 +123,36 @@ document.addEventListener('mouseup', () => {
   bladeTrail.style.opacity = '0';
 });
 
-function playFruitSequence() {
-  return new Promise((resolve) => {
-    gameStage.classList.remove('hidden');
-    backgroundFruits.classList.add('hidden');
-    menuCard.classList.add('hidden');
-    playBtn.disabled = true;
-    playBtn.textContent = 'Launching...';
-    isGameActive = true;
-    isMouseDown = false;
-    bladeTrail.style.opacity = '0';
+function spawnFruit() {
+  const image = fruitImages[nextFruitIndex % fruitImages.length];
+  const fruit = createThrownFruit(image);
+  gameStage.appendChild(fruit);
 
-    const totalFruits = 8;
-    let endedCount = 0;
-
-    for (let i = 0; i < totalFruits; i += 1) {
-      setTimeout(() => {
-        const image = fruitImages[i % fruitImages.length];
-        const fruit = createThrownFruit(image, i);
-        gameStage.appendChild(fruit);
-
-        fruit.addEventListener('animationend', () => {
-          if (!fruit.classList.contains('sliced')) {
-            fruit.remove();
-          }
-          endedCount += 1;
-
-          if (endedCount === totalFruits) {
-            isGameActive = false;
-            isMouseDown = false;
-            bladeTrail.style.opacity = '0';
-            playBtn.disabled = false;
-            playBtn.textContent = 'Play Again';
-            menuCard.classList.remove('hidden');
-            backgroundFruits.classList.remove('hidden');
-            gameStage.classList.add('hidden');
-            resolve();
-          }
-        }, { once: true });
-      }, i * 220);
+  fruit.addEventListener('animationend', () => {
+    if (!fruit.classList.contains('sliced')) {
+      fruit.remove();
     }
-  });
+  }, { once: true });
+
+  nextFruitIndex += 1;
+}
+
+function playFruitSequence() {
+  gameStage.classList.remove('hidden');
+  backgroundFruits.classList.add('hidden');
+  menuCard.classList.add('hidden');
+  playBtn.disabled = true;
+  playBtn.textContent = 'Playing...';
+  isGameActive = true;
+  isMouseDown = false;
+  bladeTrail.style.opacity = '0';
+
+  spawnFruit();
+  spawnInterval = setInterval(spawnFruit, 260);
 }
 
 playBtn.addEventListener('click', () => {
-  playFruitSequence();
+  if (!isGameActive) {
+    playFruitSequence();
+  }
 });
