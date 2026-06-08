@@ -11,6 +11,8 @@ const gameStage = document.getElementById('gameStage');
 const menuCard = document.querySelector('.menu-card');
 const backgroundFruits = document.querySelector('.floating-fruits');
 const bladeTrail = document.getElementById('bladeTrail');
+const scorePanel = document.getElementById('scorePanel');
+const scoreValue = document.getElementById('scoreValue');
 
 let isGameActive = false;
 let lastX = 0;
@@ -18,6 +20,7 @@ let lastY = 0;
 let isMouseDown = false;
 let spawnInterval = null;
 let nextFruitIndex = 0;
+let score = 0;
 
 function createThrownFruit(imageSrc) {
   const fruit = document.createElement('img');
@@ -67,6 +70,9 @@ function createSlashEffect(x, y, velocityX, velocityY) {
 function sliceFruit(fruit) {
   if (!fruit || fruit.classList.contains('sliced')) return;
   fruit.classList.add('sliced');
+
+  score += 10;
+  scoreValue.textContent = score;
 
   const rect = fruit.getBoundingClientRect();
   const width = rect.width;
@@ -172,6 +178,10 @@ function spawnFruit() {
 }
 
 function playFruitSequence() {
+  score = 0;
+  scoreValue.textContent = score;
+  scorePanel.classList.remove('hidden');
+
   gameStage.classList.remove('hidden');
   backgroundFruits.classList.add('hidden');
   menuCard.classList.add('hidden');

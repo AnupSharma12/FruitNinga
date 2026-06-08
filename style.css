@@ -33,9 +33,41 @@ body {
   overflow: hidden;
 }
 
+.score-panel {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  z-index: 15;
+  min-width: 120px;
+  padding: 2px 14px 0 14px;
+  color: #fff;
+  text-align: left;
+}
+
+.score-panel::before {
+  display: none;
+}
+
+.score-label {
+  font-size: 12px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #ffd76f;
+  margin-bottom: 10px;
+}
+
+.score-value {
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #fff;
+  text-shadow: 0 0 24px rgba(255, 200, 80, 0.8);
+}
+
 .fruit {
   position: absolute;
   width: 60px;
+  opacity: 0.5;
   opacity: 0.5;
   animation: floatUp linear infinite;
 }
