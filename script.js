@@ -21,10 +21,13 @@ const lifeImages = [
 ];
 const gameOverMenu = document.getElementById('gameOverMenu');
 const gameOverScore = document.getElementById('gameOverScore');
+const gameOverHighScore = document.getElementById('gameOverHighScore');
+const highScoreValue = document.getElementById('highScoreValue');
 const retryBtn = document.getElementById('retryBtn');
 const returnToMenuBtn = document.getElementById('returnToMenuBtn');
 
 let isGameActive = false;
+let highScore = Number(localStorage.getItem('fruitNinjaHighScore')) || 0;
 let lastX = 0;
 let lastY = 0;
 let isMouseDown = false;
@@ -62,7 +65,6 @@ function createThrownFruit(imageSrc) {
     fruit.classList.add('bomb-fruit');
   }
 
-  nextFruitIndex += 1;
   return fruit;
 }
 
@@ -96,6 +98,19 @@ function updateLivesDisplay() {
   });
 }
 
+function updateHighScoreDisplay() {
+  highScoreValue.textContent = highScore;
+  gameOverHighScore.textContent = highScore;
+}
+
+function updateHighScore(newScore) {
+  if (newScore > highScore) {
+    highScore = newScore;
+    localStorage.setItem('fruitNinjaHighScore', String(highScore));
+  }
+  updateHighScoreDisplay();
+}
+
 function loseLife() {
   if (!isGameActive) return;
 
@@ -108,6 +123,7 @@ function loseLife() {
 }
 
 function endGame() {
+  updateHighScore(score);
   isGameActive = false;
   if (spawnInterval) clearTimeout(spawnInterval);
   spawnInterval = null;
@@ -123,6 +139,10 @@ function endGame() {
 retryBtn.addEventListener('click', () => {
   gameOverMenu.classList.add('hidden');
   playFruitSequence();
+});
+
+window.addEventListener('load', () => {
+  updateHighScoreDisplay();
 });
 
 returnToMenuBtn.addEventListener('click', () => {
@@ -244,10 +264,10 @@ function spawnFruit() {
   gameStage.appendChild(fruit);
 
   fruit.addEventListener('animationend', () => {
-    if (!fruit.classList.contains('sliced')) {
+    if (!fruit.classList.contains('sliced') && fruit.dataset.isBomb !== 'true') {
       loseLife();
-      fruit.remove();
     }
+    fruit.remove();
   }, { once: true });
 
   nextFruitIndex += 1;

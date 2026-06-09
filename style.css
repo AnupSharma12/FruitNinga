@@ -64,6 +64,21 @@ body {
   text-shadow: 0 0 24px rgba(255, 200, 80, 0.8);
 }
 
+.menu-highscore,
+.game-over-highscore {
+  font-size: 18px;
+  color: #ffd76f;
+  letter-spacing: 1px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.menu-highscore span,
+.game-over-highscore span {
+  color: #ffffff;
+  margin-left: 8px;
+}
+
 .lives-panel {
   position: fixed;
   top: 24px;
