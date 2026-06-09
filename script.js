@@ -13,6 +13,12 @@ const backgroundFruits = document.querySelector('.floating-fruits');
 const bladeTrail = document.getElementById('bladeTrail');
 const scorePanel = document.getElementById('scorePanel');
 const scoreValue = document.getElementById('scoreValue');
+const livesPanel = document.getElementById('livesPanel');
+const lifeImages = [
+  document.getElementById('life1'),
+  document.getElementById('life2'),
+  document.getElementById('life3')
+];
 
 let isGameActive = false;
 let lastX = 0;
@@ -21,6 +27,8 @@ let isMouseDown = false;
 let spawnInterval = null;
 let nextFruitIndex = 0;
 let score = 0;
+let gameStartTime = 0;
+let lives = 3;
 
 function createThrownFruit(imageSrc) {
   const fruit = document.createElement('img');
@@ -33,6 +41,7 @@ function createThrownFruit(imageSrc) {
   const spinEnd = 720 + Math.round(Math.random() * 360);
   const peakHeight = 50 + Math.random() * 40;
   const duration = 3.4 + Math.random() * 1.2;
+  const isBomb = Math.random() < 0.15; // 15% chance of bomb
 
   fruit.style.setProperty('--start-x', `${startX}%`);
   fruit.style.setProperty('--throw-offset', `${offsetX}px`);
@@ -42,6 +51,12 @@ function createThrownFruit(imageSrc) {
   fruit.style.setProperty('--peak-height', `${peakHeight}vh`);
   fruit.style.setProperty('--duration', `${duration}s`);
   fruit.style.width = `${50 + Math.round(Math.random() * 30)}px`;
+  fruit.dataset.isBomb = isBomb;
+
+  if (isBomb) {
+    fruit.src = 'images/boom.png';
+    fruit.classList.add('bomb-fruit');
+  }
 
   nextFruitIndex += 1;
   return fruit;
@@ -67,12 +82,31 @@ function createSlashEffect(x, y, velocityX, velocityY) {
   setTimeout(() => slash.remove(), 600);
 }
 
+function updateLivesDisplay() {
+  lifeImages.forEach((img, idx) => {
+    if (idx < lives) {
+      img.src = 'images/x1.png';
+    } else {
+      img.src = 'images/xx1.png';
+    }
+  });
+}
+
+function loseLife() {
+  lives -= 1;
+  updateLivesDisplay();
+}
+
 function sliceFruit(fruit) {
   if (!fruit || fruit.classList.contains('sliced')) return;
   fruit.classList.add('sliced');
 
-  score += 10;
-  scoreValue.textContent = score;
+  if (fruit.dataset.isBomb === 'true') {
+    loseLife();
+  } else {
+    score += 10;
+    scoreValue.textContent = score;
+  }
 
   const rect = fruit.getBoundingClientRect();
   const width = rect.width;
@@ -170,6 +204,7 @@ function spawnFruit() {
 
   fruit.addEventListener('animationend', () => {
     if (!fruit.classList.contains('sliced')) {
+      loseLife();
       fruit.remove();
     }
   }, { once: true });
@@ -177,10 +212,33 @@ function spawnFruit() {
   nextFruitIndex += 1;
 }
 
+function scheduleNextSpawn() {
+  if (!isGameActive) return;
+
+  const elapsedMs = Date.now() - gameStartTime;
+  const elapsedSec = elapsedMs / 1000;
+
+  // Start at 1200ms, decrease by 8ms every second, minimum 500ms
+  const baseInterval = 1200;
+  const acceleration = 8;
+  const minInterval = 500;
+  const currentInterval = Math.max(minInterval, baseInterval - elapsedSec * acceleration);
+
+  spawnInterval = setTimeout(() => {
+    if (isGameActive) {
+      spawnFruit();
+      scheduleNextSpawn();
+    }
+  }, currentInterval);
+}
+
 function playFruitSequence() {
   score = 0;
+  lives = 3;
   scoreValue.textContent = score;
   scorePanel.classList.remove('hidden');
+  livesPanel.classList.remove('hidden');
+  updateLivesDisplay();
 
   gameStage.classList.remove('hidden');
   backgroundFruits.classList.add('hidden');
@@ -191,8 +249,9 @@ function playFruitSequence() {
   isMouseDown = false;
   bladeTrail.style.opacity = '0';
 
+  gameStartTime = Date.now();
   spawnFruit();
-  spawnInterval = setInterval(spawnFruit, 260);
+  scheduleNextSpawn();
 }
 
 playBtn.addEventListener('click', () => {

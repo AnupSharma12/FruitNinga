@@ -64,6 +64,31 @@ body {
   text-shadow: 0 0 24px rgba(255, 200, 80, 0.8);
 }
 
+.lives-panel {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 15;
+  display: flex;
+  gap: 8px;
+}
+
+.lives-panel.hidden {
+  display: none !important;
+}
+
+.lives-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 6px rgba(255, 150, 0, 0.5));
+}
+
+.bomb-fruit {
+  filter: brightness(1.2);
+}
+
 .fruit {
   position: absolute;
   width: 60px;
