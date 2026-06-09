@@ -19,6 +19,10 @@ const lifeImages = [
   document.getElementById('life2'),
   document.getElementById('life3')
 ];
+const gameOverMenu = document.getElementById('gameOverMenu');
+const gameOverScore = document.getElementById('gameOverScore');
+const retryBtn = document.getElementById('retryBtn');
+const returnToMenuBtn = document.getElementById('returnToMenuBtn');
 
 let isGameActive = false;
 let lastX = 0;
@@ -93,9 +97,46 @@ function updateLivesDisplay() {
 }
 
 function loseLife() {
+  if (!isGameActive) return;
+
   lives -= 1;
   updateLivesDisplay();
+
+  if (lives <= 0) {
+    endGame();
+  }
 }
+
+function endGame() {
+  isGameActive = false;
+  if (spawnInterval) clearTimeout(spawnInterval);
+  spawnInterval = null;
+
+  scorePanel.classList.add('hidden');
+  livesPanel.classList.add('hidden');
+  gameStage.classList.add('hidden');
+  gameOverScore.textContent = score;
+  gameOverMenu.classList.remove('hidden');
+  backgroundFruits.classList.remove('hidden');
+}
+
+retryBtn.addEventListener('click', () => {
+  gameOverMenu.classList.add('hidden');
+  playFruitSequence();
+});
+
+returnToMenuBtn.addEventListener('click', () => {
+  gameOverMenu.classList.add('hidden');
+  menuCard.classList.remove('hidden');
+  backgroundFruits.classList.remove('hidden');
+  gameStage.classList.add('hidden');
+  gameStage.innerHTML = '';
+  isGameActive = false;
+  isMouseDown = false;
+  bladeTrail.style.opacity = '0';
+  playBtn.disabled = false;
+  playBtn.textContent = '▶ Play';
+});
 
 function sliceFruit(fruit) {
   if (!fruit || fruit.classList.contains('sliced')) return;

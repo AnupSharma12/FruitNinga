@@ -89,6 +89,44 @@ body {
   filter: brightness(1.2);
 }
 
+.game-over-menu {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  gap: 16px;
+  background: rgba(10, 5, 0, 0.92);
+  z-index: 20;
+  text-align: center;
+}
+
+.game-over-menu.hidden {
+  display: none;
+}
+
+.game-over-image {
+  max-width: 360px;
+  width: 90%;
+  filter: drop-shadow(0 0 30px rgba(255, 80, 0, 0.7));
+}
+
+.game-over-text {
+  font-size: 18px;
+  letter-spacing: 3px;
+  color: #ffd76f;
+  text-transform: uppercase;
+}
+
+.game-over-score {
+  font-size: 42px;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 0 24px rgba(255, 200, 80, 0.9);
+}
+
 .fruit {
   position: absolute;
   width: 60px;
